@@ -34,10 +34,24 @@ namespace Examples.TankArena.Scripts.Entities {
         [Header	("Parameters")]
         public LayerMask CoverLayer;
         
-        [Header("Debug Only")]
+        /**
+         * A tank which this tank currently target (the turret automatically turn toward it)
+         */
         public TankEntity Target;
+        
+        /**
+         * A Vector3 of the current destination of this tank
+         */
         public Vector3 Destination;
+        
+        /**
+         * An integer indicating the maximum health point of this tank
+         */
         public int MaxHp;
+        
+        /**
+         * An integer indicating the current health point of this tank
+         */
         public int CurrentHp;
         
         public static List<TankEntity> TankEntities = new List<TankEntity>();
@@ -54,8 +68,14 @@ namespace Examples.TankArena.Scripts.Entities {
         private int _waypointRadius;
         private readonly Collider[] _hitColliders = new Collider[10];
         
+        /**
+         * The team of this tank
+         */
         public Team Team { get; private set; }
         
+        /**
+         * Return the current tank in sight of the canon of this tank (return null if none)
+         */
         public TankEntity TankInSight {
             get {
                 if (!Physics.Raycast(CanonOut.position, CanonOut.forward, out var hit, Mathf.Infinity)) return null;
@@ -63,17 +83,45 @@ namespace Examples.TankArena.Scripts.Entities {
             }
         }
         
+        /**
+         * Return the transform, mainly to retrieve position
+         */
         public Transform Transform => transform;
+        
+        /**
+         * Return a boolean to check if the tank is ready to fire
+         */
         public bool IsShellLoaded => _timeSinceLastShot >= _reloadTime;
+        
+        /**
+         * Return a boolean to check if the tank is destroyed
+         */
         public bool IsDead => CurrentHp <= 0;
+        
+        /**
+         * Return a list of tanks which currently target this tank
+         */
         public List<TankEntity> Aggressors => TankEntities
             .Where(go => go != null && go.GetComponent<TankEntity>().Target == this).ToList();
+        
+        /**
+         * Return the count of tanks which currently target this tank
+         */
         public int AgressorsCount => Aggressors.Count;
+        
+        /**
+         * Return a list of waypoint around the tank
+         */
+        public List<WaypointEntity> SeekWaypointInRadius =>
+            WaypointEntity.WaypointEntities.Where(go => 
+                Vector3.Distance(transform.position, go.transform.position) < _waypointRadius).ToList();
+
         private int TotalDamages => MaxHp - CurrentHp;
         private float DamagePercent => (float) TotalDamages / MaxHp;
         private bool IsAtDestination => _navMeshAgent.remainingDistance < Mathf.Infinity &&
                                          _navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete &&
                                          _navMeshAgent.remainingDistance <= 0;
+
         
         private void Awake() {
             _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -196,11 +244,6 @@ namespace Examples.TankArena.Scripts.Entities {
         public void Heal(int healing) {
             CurrentHp += healing;
             if (CurrentHp > MaxHp) CurrentHp = MaxHp;
-        }
-
-        public List<WaypointEntity> SeekWaypointInRadius() {
-            return WaypointEntity.WaypointEntities
-                .Where(go => Vector3.Distance(transform.position, go.transform.position) < _waypointRadius).ToList();
         }
 
         public FactionType GetFaction(TankEntity otherTank) {

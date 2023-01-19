@@ -22,6 +22,9 @@ namespace Examples.TankArena.Scripts.Entities {
             WaypointEntities.Remove(this);
         }
         
+        /**
+         * Not available for now
+         */
         public int ObserverCount(TankEntity hider, FactionType seekersFaction) {
             if (seekersFaction == FactionType.All) {
                 return transform.InLineOfView(hider.transform,
@@ -37,6 +40,9 @@ namespace Examples.TankArena.Scripts.Entities {
                     .Select(entity => entity.transform).ToList(), CoverLayer).Count;
         }
 
+        /**
+         * Not available for now
+         */
         public bool IsTargetObserver(TankEntity hider, TankEntity seeker) {
             if (seeker == null) return false;
             return transform.InLineOfView(hider.transform, new List<Transform> {seeker.transform}, CoverLayer).Count == 0;
