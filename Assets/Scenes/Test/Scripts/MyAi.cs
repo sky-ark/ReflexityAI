@@ -8,14 +8,30 @@ namespace Scenes.Test.Scripts
 {
     public class MyAi : ReflexityAI
     {
-        public float MaxHP = 10;
+        public MyCubeEntity MyCubeEntity;
 
-        public float CurrentHP;
+        public List<MyCubeEntity> MyCubeEntities;
         
-        // Start is called before the first frame update
-        private void Awake()
-        {
-            CurrentHP = MaxHP;
+        private void Awake() {
+            MyCubeEntity = GetComponent<MyCubeEntity>();
         }
+
+        //     public float MaxHP = 10;
+        //
+        //     public float CurrentHP;
+        //
+        //     public bool IsFullHP; 
+        //     
+        //     // Start is called before the first frame update
+        //     private void Awake()
+        //     {
+        //         CurrentHP = MaxHP;
+        //     }
+        //
+        //     private void Update()
+        //     {
+        //         throw new NotImplementedException();
+        //     }
+        // }
     }
 }
